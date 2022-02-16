@@ -32,16 +32,21 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse getAllPost(int pageNo, int pageSize, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-
+        Sort sort = getOrders(sortBy, sortDir);
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Post> posts = postRepository.findAll(pageable);
         List<Post> postsList = posts.getContent();
+        List<PostDto> content = getContentFromPost(postsList);
+        return getPostResponse(pageNo, pageSize, posts, content);
+    }
 
-        List<PostDto> content =  postsList.stream()
+    private List<PostDto> getContentFromPost(List<Post> postsList) {
+        return postsList.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
+    }
 
+    private PostResponse getPostResponse(int pageNo, int pageSize, Page<Post> posts, List<PostDto> content) {
         PostResponse postResponse = new PostResponse();
         postResponse.setContent(content);
         postResponse.setPageNo(pageNo);
@@ -51,6 +56,11 @@ public class PostServiceImpl implements PostService {
         postResponse.setLast(posts.isLast());
 
         return postResponse;
+    }
+
+    private Sort getOrders(String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        return sort;
     }
 
     @Override
