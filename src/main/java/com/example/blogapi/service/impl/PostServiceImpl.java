@@ -7,6 +7,9 @@ import com.example.blogapi.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @AllArgsConstructor
 @Service
 public class PostServiceImpl implements PostService {
@@ -14,14 +17,21 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     @Override
-    public PostDto createPost(PostDto postDto) {
-        Post post = convertToEntity(postDto);
-        postRepository.save(post);
-
-        return convertToDto(post);
+    public List<PostDto> getAllPost() {
+        List<Post> posts = postRepository.findAll();
+        return posts.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    private Post convertToEntity(PostDto postDto) {
+    @Override
+    public PostDto createPost(PostDto postDto) {
+        Post post = mapToEntity(postDto);
+        postRepository.save(post);
+        return mapToDTO(post);
+    }
+
+    private Post mapToEntity(PostDto postDto) {
         Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
@@ -29,7 +39,7 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
-    private PostDto convertToDto(Post post) {
+    private PostDto mapToDTO(Post post) {
         PostDto postResponse = new PostDto();
         postResponse.setId(post.getId());
         postResponse.setTitle(post.getTitle());
