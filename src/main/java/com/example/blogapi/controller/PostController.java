@@ -25,8 +25,9 @@ public class PostController {
     @GetMapping
     public PostResponse getAllPosts(@RequestParam(defaultValue = "0", required = false) int pageNo,
                                     @RequestParam(defaultValue = "5", required = false) int pageSize,
-                                    @RequestParam(defaultValue = "id", required = false) String sortBy) {
-        return postService.getAllPost(pageNo, pageSize, sortBy);
+                                    @RequestParam(defaultValue = "id", required = false) String sortBy,
+                                    @RequestParam(defaultValue = "asc", required = false) String sortDir) {
+        return postService.getAllPost(pageNo, pageSize, sortBy, sortDir);
     }
 
     @GetMapping("/{id}")
@@ -39,4 +40,5 @@ public class PostController {
         PostDto postResponse = postService.updatePost(postDto, id);
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
+
 }
