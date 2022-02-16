@@ -1,6 +1,7 @@
 package com.example.blogapi.controller;
 
-import com.example.blogapi.dto.PostDto;
+import com.example.blogapi.payload.PostDto;
+import com.example.blogapi.payload.PostResponse;
 import com.example.blogapi.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,9 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostDto> getAllPosts() {
-        return postService.getAllPost();
+    public PostResponse getAllPosts(@RequestParam(defaultValue = "0", required = false) int pageNo,
+                                    @RequestParam(defaultValue = "5", required = false) int pageSize) {
+        return postService.getAllPost(pageNo, pageSize);
     }
 
     @GetMapping("/{id}")
