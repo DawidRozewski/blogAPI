@@ -24,6 +24,15 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
 
     @Override
+    public void deleteComment(Long postId, Long commentId) {
+        Post post = getPost(postId);
+        Comment comment = getComment(commentId);
+        ifCommentDoesntBelongToPostThrowException(post, comment);
+
+        commentRepository.delete(comment);
+    }
+
+    @Override
     public CommentDto updateComment(Long postId, long commentId, CommentDto commentRequest) {
         Post post = getPost(postId);
         Comment comment = getComment(commentId);
