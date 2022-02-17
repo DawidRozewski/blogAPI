@@ -24,14 +24,31 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
 
     @Override
+    public CommentDto updateComment(Long postId, long commentId, CommentDto commentRequest) {
+        Post post = getPost(postId);
+        Comment comment = getComment(commentId);
+        ifCommentDoesntBelongToPostThrowException(post, comment);
+        comment.setName(commentRequest.getName());
+        comment.setEmail(commentRequest.getEmail());
+        comment.setBody(commentRequest.getBody());
+
+        Comment updatedComment = commentRepository.save(comment);
+        return mapToDTO(updatedComment);
+    }
+
+    @Override
     public CommentDto getCommentById(Long postId, Long commentId) {
         Post post  = getPost(postId);
         Comment comment = getComment(commentId);
-        if(!comment.getPost().getId().equals(post.getId())) {
-            throw new BlogAPIExcpetion(HttpStatus.BAD_REQUEST, "Comment doesn not belong to post");
-        }
+        ifCommentDoesntBelongToPostThrowException(post, comment);
 
         return mapToDTO(comment);
+    }
+
+    private void ifCommentDoesntBelongToPostThrowException(Post post, Comment comment) {
+        if(!comment.getPost().getId().equals(post.getId())) {
+            throw new BlogAPIExcpetion(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+        }
     }
 
     private Comment getComment(Long commentId) {
