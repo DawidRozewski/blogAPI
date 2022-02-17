@@ -1,5 +1,6 @@
 package com.example.blogapi.service.impl;
 
+import com.example.blogapi.exception.BlogAPIExcpetion;
 import com.example.blogapi.exception.ResourceNotFoundException;
 import com.example.blogapi.model.Comment;
 import com.example.blogapi.model.Post;
@@ -8,6 +9,7 @@ import com.example.blogapi.repository.CommentRepository;
 import com.example.blogapi.repository.PostRepository;
 import com.example.blogapi.service.CommentService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,25 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
 
     @Override
+    public CommentDto getCommentById(Long postId, Long commentId) {
+        Post post  = getPost(postId);
+        Comment comment = getComment(commentId);
+        if(!comment.getPost().getId().equals(post.getId())) {
+            throw new BlogAPIExcpetion(HttpStatus.BAD_REQUEST, "Comment doesn not belong to post");
+        }
+
+        return mapToDTO(comment);
+    }
+
+    private Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+    }
+
+    private Post getPost(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+    }
+
+    @Override
     public List<CommentDto> getCommentsByPostId(long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
         return comments.stream()
@@ -31,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto createComment(long postId, CommentDto commentDto) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+        Post post = getPost(postId);
         Comment comment = mapToEntity(commentDto);
         comment.setPost(post);
         Comment newComment = commentRepository.save(comment);
