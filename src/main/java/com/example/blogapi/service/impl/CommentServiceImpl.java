@@ -1,6 +1,6 @@
 package com.example.blogapi.service.impl;
 
-import com.example.blogapi.exception.BlogAPIExcpetion;
+import com.example.blogapi.exception.BlogAPIException;
 import com.example.blogapi.exception.ResourceNotFoundException;
 import com.example.blogapi.model.Comment;
 import com.example.blogapi.model.Post;
@@ -12,8 +12,6 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
 
     private void ifCommentDoesntBelongToPostThrowException(Post post, Comment comment) {
         if(!comment.getPost().getId().equals(post.getId())) {
-            throw new BlogAPIExcpetion(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
         }
     }
 
