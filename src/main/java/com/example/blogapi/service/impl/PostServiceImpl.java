@@ -7,6 +7,7 @@ import com.example.blogapi.payload.PostResponse;
 import com.example.blogapi.repository.PostRepository;
 import com.example.blogapi.service.PostService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +22,11 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
-
+    private final ModelMapper mapper;
 
     @Override
     public PostDto getPostById(long id) {
-        Post post = postRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         return mapToDTO(post);
     }
 
@@ -82,19 +82,10 @@ public class PostServiceImpl implements PostService {
     }
 
     private Post mapToEntity(PostDto postDto) {
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
-        return post;
+        return mapper.map(postDto, Post.class);
     }
 
     private PostDto mapToDTO(Post post) {
-        PostDto postResponse = new PostDto();
-        postResponse.setId(post.getId());
-        postResponse.setTitle(post.getTitle());
-        postResponse.setDescription(post.getDescription());
-        postResponse.setContent(post.getContent());
-        return postResponse;
+        return mapper.map(post, PostDto.class);
     }
 }
