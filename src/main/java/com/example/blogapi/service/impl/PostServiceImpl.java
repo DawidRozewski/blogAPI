@@ -20,15 +20,17 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class PostServiceImpl implements PostService {
-
     private final PostRepository postRepository;
+
     private final ModelMapper mapper;
 
     @Override
-    public PostDto getPostById(long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
-        return mapToDTO(post);
+    public void deletePostById(long id) {
+        Post post = getPost(id);
+
+        postRepository.delete(post);
     }
+
 
     @Override
     public PostResponse getAllPost(int pageNo, int pageSize, String sortBy, String sortDir) {
@@ -39,7 +41,6 @@ public class PostServiceImpl implements PostService {
         List<PostDto> content = getContentFromPost(postsList);
         return getPostResponse(pageNo, pageSize, posts, content);
     }
-
     private List<PostDto> getContentFromPost(List<Post> postsList) {
         return postsList.stream()
                 .map(this::mapToDTO)
@@ -64,8 +65,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto updatePost(PostDto postDto, long id) {
-        Post post = postRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        Post post = getPost(id);
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
@@ -77,7 +77,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto) {
         Post post = mapToEntity(postDto);
-        postRepository.save(post);
+        Post newPost = postRepository.save(post);
+        return mapToDTO(newPost);
+    }
+
+    @Override
+    public PostDto getPostById(long id) {
+        Post post = getPost(id);
         return mapToDTO(post);
     }
 
@@ -87,5 +93,9 @@ public class PostServiceImpl implements PostService {
 
     private PostDto mapToDTO(Post post) {
         return mapper.map(post, PostDto.class);
+    }
+
+    private Post getPost(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
     }
 }
