@@ -1,6 +1,7 @@
 package com.example.blogapi.security;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,9 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @AllArgsConstructor
+@NoArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider tokenProvider;
+    private JwtTokenProvider tokenProvider;
     private CustomUserDetailsService customUserDetailsService;
 
     @Override
