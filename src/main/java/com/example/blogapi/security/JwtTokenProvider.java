@@ -13,23 +13,20 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
+    public static final int TEN_HOURS = 36000000;
     @Value("${app.jwt-secret}")
     private String jwtSecret;
-
-    @Value("${app.jwt-expiration-milliseconds}")
-    private String jwtExpirationInMs;
 
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
         Date currentDate = new Date();
-        Date expireDate = new Date(currentDate.getTime() + jwtExpirationInMs);
+        Date expireDate = new Date(System.currentTimeMillis() + TEN_HOURS);
         String token = Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
-
         return token;
     }
 
@@ -38,7 +35,6 @@ public class JwtTokenProvider {
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody();
-
         return claims.getSubject();
     }
 
