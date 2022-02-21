@@ -29,20 +29,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String token = getJWTfromRequest(request);
         if(isTokenValid(token)) {
-            // get username from token
-            String username = tokenProvider.getUsernameFromJWT(token);
-            // load user associated with token
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities()
-            );
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            // set spring security
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            UserDetails userDetails = getUserDetails(token);
+            UsernamePasswordAuthenticationToken authenticationToken = setAuthenticationToken(request, userDetails);
+            setSpringSecurity(authenticationToken);
         }
         filterChain.doFilter(request, response);
 
+    }
+
+    private UsernamePasswordAuthenticationToken setAuthenticationToken(HttpServletRequest request, UserDetails userDetails) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities()
+        );
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        return authenticationToken;
+    }
+    private void setSpringSecurity(UsernamePasswordAuthenticationToken authenticationToken) {
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+    }
+
+    private UserDetails getUserDetails(String token) {
+        String username = getString(token);
+        return customUserDetailsService.loadUserByUsername(username);
+    }
+
+    private String getString(String token) {
+        return tokenProvider.getUsernameFromJWT(token);
     }
 
     private boolean isTokenValid(String token) {

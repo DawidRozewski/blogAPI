@@ -1,13 +1,12 @@
 package com.example.blogapi.exception;
 
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 
 public class BlogAPIException extends RuntimeException{
 
-    private HttpStatus status;
-    private String message;
+    private final HttpStatus status;
+    private final String message;
 
 
     public BlogAPIException(HttpStatus status, String message) {

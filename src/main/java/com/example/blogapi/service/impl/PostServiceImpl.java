@@ -27,7 +27,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePostById(long id) {
         Post post = getPost(id);
-
         postRepository.delete(post);
     }
 
@@ -91,7 +90,8 @@ public class PostServiceImpl implements PostService {
         return mapper.map(postDto, Post.class);
     }
 
-    private PostDto mapToDTO(Post post) {
+    private PostDto mapToDTO(Post post)
+    {
         return mapper.map(post, PostDto.class);
     }
 
