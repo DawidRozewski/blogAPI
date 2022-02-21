@@ -1,10 +1,7 @@
 package com.example.blogapi.service;
 
 import com.example.blogapi.payload.PostDto;
-import com.example.blogapi.payload.PostDtoV2;
 import com.example.blogapi.payload.PostResponse;
-
-import java.util.List;
 
 public interface PostService {
     PostDto createPost(PostDto postDto);
@@ -12,5 +9,5 @@ public interface PostService {
     PostDto getPostById(long id);
     PostDto updatePost(PostDto postDto, long id);
     void deletePostById(long id);
-    PostDtoV2 clonePostDto(long id);
+
 }

@@ -3,7 +3,6 @@ package com.example.blogapi.service.impl;
 import com.example.blogapi.payload.PostDto;
 import com.example.blogapi.exception.ResourceNotFoundException;
 import com.example.blogapi.model.Post;
-import com.example.blogapi.payload.PostDtoV2;
 import com.example.blogapi.payload.PostResponse;
 import com.example.blogapi.repository.PostRepository;
 import com.example.blogapi.service.PostService;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,24 +25,10 @@ public class PostServiceImpl implements PostService {
     private final ModelMapper mapper;
 
     @Override
-    public PostDtoV2 clonePostDto(long id) {
-        PostDto postDto = getPostById(id);
-        PostDtoV2 postDtoV2 = new PostDtoV2();
-        postDtoV2.setId(postDto.getId());
-        postDtoV2.setTitle(postDto.getTitle());
-        postDtoV2.setDescription(postDto.getDescription());
-        postDtoV2.setContent(postDto.getContent());
-        List<String> tags = List.of("Java","Spring Boot", "AWS");
-        postDtoV2.setTags(tags);
-        return postDtoV2;
-    }
-
-    @Override
     public void deletePostById(long id) {
         Post post = getPost(id);
         postRepository.delete(post);
     }
-
 
     @Override
     public PostResponse getAllPost(int pageNo, int pageSize, String sortBy, String sortDir) {

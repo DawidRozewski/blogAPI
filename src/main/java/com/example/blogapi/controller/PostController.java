@@ -1,7 +1,6 @@
 package com.example.blogapi.controller;
 
 import com.example.blogapi.payload.PostDto;
-import com.example.blogapi.payload.PostDtoV2;
 import com.example.blogapi.payload.PostResponse;
 import com.example.blogapi.service.PostService;
 import com.example.blogapi.utils.AppConstants;
@@ -33,15 +32,9 @@ public class PostController {
         return postService.getAllPost(pageNo, pageSize, sortBy, sortDir);
     }
 
-    @GetMapping(value = "/api/posts/{id}", headers = "X-API-VERSION=1")
+    @GetMapping(value = "/api/v1/posts/{id}")
     public ResponseEntity<PostDto> getPostByIdV1(@PathVariable long id) {
         return ResponseEntity.ok(postService.getPostById(id));
-    }
-
-    @GetMapping(value = "/api/posts/{id}",  headers = "X-API-VERSION=2")
-    public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable long id) {
-        PostDtoV2 postDtoV2 = postService.clonePostDto(id);
-        return ResponseEntity.ok(postDtoV2);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
