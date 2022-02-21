@@ -33,12 +33,12 @@ public class PostController {
         return postService.getAllPost(pageNo, pageSize, sortBy, sortDir);
     }
 
-    @GetMapping("/api/v1/posts/{id}")
+    @GetMapping(value = "/api/posts/{id}", params = "version=1")
     public ResponseEntity<PostDto> getPostByIdV1(@PathVariable long id) {
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
-    @GetMapping("/api/v2/posts/{id}")
+    @GetMapping(value = "/api/posts/{id}", params = "version=2")
     public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable long id) {
         PostDtoV2 postDtoV2 = postService.clonePostDto(id);
         return ResponseEntity.ok(postDtoV2);
