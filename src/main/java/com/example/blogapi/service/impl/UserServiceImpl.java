@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper mapper;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void save(User user) {
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User mapToEntity(SignUpDto signUpDto) {
         User user = mapper.map(signUpDto, User.class);
+        user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
         setRoleAdmin(user);
         return user;
     }
