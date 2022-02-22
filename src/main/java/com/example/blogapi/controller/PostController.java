@@ -33,7 +33,7 @@ public class PostController {
     }
 
     @GetMapping(value = "/api/v1/posts/{id}")
-    public ResponseEntity<PostDto> getPostByIdV1(@PathVariable long id) {
+    public ResponseEntity<PostDto> getPostById(@PathVariable long id) {
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
